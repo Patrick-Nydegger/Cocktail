@@ -1,3 +1,9 @@
+#Hier wird das Hauptmenu und die Applikationssteuerung Programmiert
+
+
+
+"""
+
 import cv2
 import numpy as np
 from ultralytics import YOLO
@@ -43,3 +49,5 @@ while True:
 # Gib die Kamera frei
 cap.release()
 cv2.destroyAllWindows()
+
+"""
