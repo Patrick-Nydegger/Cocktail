@@ -19,7 +19,8 @@ class OCRRecognition:
 
 
 
-        def OCR-classifier(target_list):
+        def OCR_classifier(target_list):
+
             whisky_keywords = [
                 # Allgemeine Begriffe und Schreibweisen
                 "whisky",

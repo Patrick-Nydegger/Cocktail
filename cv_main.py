@@ -6,7 +6,7 @@ from draw_utils import draw_object
 
 
 # Erstellung der Liste für erkannte Flaschen
-detected_bottles = []
+available_ingredients = []
 
 # Funktion für management von CV-Modul
 def cv_main():
@@ -38,16 +38,17 @@ def cv_main():
         # Überprüfe, ob eine Klassifizierung ungenau ist
         unsatisfactory = any(confidence < confidence_level  for _, _, _, _, confidence, _, _ in bottle_classification)
 
-        # Fülle detected_bottles-Liste mit zufriedenstellenden Klassennamen
+        # Fülle available_ingredients-Liste mit zufriedenstellenden Klassennamen
         for x_min, y_min, x_max, y_max, confidence, class_id, class_name in bottle_classification:
             if confidence >= confidence_level:
-                detected_bottles.append(class_name)
+                available_ingredients.append(class_name)
 
         # Starte OCR, falls unzureichende Klassifizierung
         if unsatisfactory:
 
             text = ocr_recognizer.extract_text(bottle_frame)
             print("OCR-Erkannter Text:", text)
+
 
 
 
@@ -60,6 +61,7 @@ def cv_main():
 
     cap.release()
     cv2.destroyAllWindows()
+    print(available_ingredients)
 
 
 if __name__ == "__main__":
