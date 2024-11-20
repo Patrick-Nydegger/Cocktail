@@ -59,7 +59,7 @@ def find_recipes_with_ingredients(available_ingredients):
             )
             # Zutaten zusammen mit Menge und Einheit abrufen
             ingredients = [
-                f"{format_amount(ingredient_row.amount)} {ingredient_row.unit_of_measurement} {ingredient_row.ingredient_name}"
+                f"{format_amount(ingredient_row.amount)} {ingredient_row.unit_of_measurement or ''} {ingredient_row.ingredient_name}".strip()
                 for ingredient_row in conn.execute(ingredients_query).fetchall()
             ]
 
@@ -75,20 +75,23 @@ def find_recipes_with_ingredients(available_ingredients):
 
 
 # Beispiel für eine Zutatenliste
-available_ingredients = ["gin","cointrau","champagne","prosecco", "Orange Juice", "Lime"]
+#available_ingredients = ["gin","cointrau","champagne","prosecco", "Orange Juice", "Lime"]
 
 # Rezepte suchen
-recipes = find_recipes_with_ingredients(available_ingredients)
+#recipes = find_recipes_with_ingredients(normalized_classes)
+
+"""
 print("Gefundene Rezepte:")
-for recipe in recipes:
+#for recipe in recipes:
     #print(f"{recipe['name']} \n - Zutaten: {', '.join(recipe['ingredients'])} \n - Methode: {recipe['method']} \n {150*'='}")
 
 
-    for recipe in recipes:
-        print(f"{recipe['name']}\nZutaten:")
-        for ingredient in recipe['ingredients']:
-            print(f"   {ingredient}")
+for recipe in recipes:
+    print(f"{recipe['name']}\nZutaten:")
+    for ingredient in recipe['ingredients']:
+        print(f"   {ingredient}")
 
-        # Methode formatieren und umbrechen
-        wrapped_method = textwrap.fill(recipe['method'], width=80)
-        print(f"Methode:\n{wrapped_method}\n{'=' * 80}")
+    # Methode formatieren und umbrechen
+    wrapped_method = textwrap.fill(recipe['method'], width=80)
+    print(f"Methode:\n{wrapped_method}\n{'=' * 80}")
+"""
