@@ -10,10 +10,11 @@ from ocr_recognition import OCRRecognition
 from draw_utils import draw_object
 
 # Erstellung der Liste für erkannte Flaschen
-available_ingredients = []
+#available_ingredients = []
+recognized_classes = []
 
 # Funktion für management von CV-Modul
-def cv_main():
+def cv_main(recognized_classes):
     bottle_detector = BottleDetector()
     bottle_classifier = BottleClassifier('best.pt')
     ocr_recognizer = OCRRecognition(language='eng')
@@ -21,7 +22,7 @@ def cv_main():
     cap = cv2.VideoCapture(0)
 
     # Einstellen der Confidence, die verlangt wird, falls ein Label durch bottle_classifications erkannt wird
-    confidence_level = 0.9
+    confidence_level = 0.5
 
     while True:
         ret, frame = cap.read()
@@ -40,9 +41,13 @@ def cv_main():
             print(f"Klassifikationen gefunden: {bottle_classification}")
 
         # Erkannt Klassen in der Konsole ausgeben
-        recognized_classes = []
+
         for x_min, y_min, x_max, y_max, confidence, class_id, class_name in bottle_classification:
             print(f"Gefunden: {class_name} mit Confidence: {confidence:.2f}")  # Debugging der Confidence-Werte
+            class_name = str(class_name)
+            print(class_name)
+            recognized_classes.append(class_name)
+
             if confidence >= confidence_level:
                 #available_ingredients.append(class_name)
 
@@ -65,7 +70,7 @@ def cv_main():
     cv2.destroyAllWindows()
     #print("Alle erkannte Klassen:", available_ingredients)
 
-    recognized_classes = [] # "gin","cointrau","prosecco", "Orange Juice", "Lime"]
+     # "gin","cointrau","prosecco", "Orange Juice", "Lime"]
     available_essentials = input("Enter your available essentials (like: lemon juice, sugar,...) \n ")
     #recognized_classes.append(available_essentials)
 
@@ -73,8 +78,8 @@ def cv_main():
     recognized_classes.extend(available_essentials.split(","))  # Split basierend auf Kommas
 
     # Liste bereinigen: Whitespace entfernen und Normalisierung anwenden
-    recognized_classes = [item.strip() for item in recognized_classes if
-                          item.strip()]  # Entfernt Leerzeichen und leere Einträge
+    #recognized_classes = [item.strip() for item in recognized_classes if
+                          #item.strip()]  # Entfernt Leerzeichen und leere Einträge
 
     # Normalisierte Klassen erzeugen
     normalized_classes = normalize_classes(recognized_classes)
@@ -98,4 +103,4 @@ def cv_main():
 
 
 if __name__ == "__main__":
-    cv_main()
+    cv_main(recognized_classes)

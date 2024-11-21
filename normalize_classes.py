@@ -16,7 +16,7 @@ def normalize_classes(recognized_classes):
     normalization_mapping = {
         "gin": ["gin", "giin", "ggin", "ggiinn", "giin", "giinn", "ginn", "tschinn", "tschin",
                 "bombay sapphire", "tanqueray", "hendricks", "beefeater",
-                "hendrick's", "gordon's", "plymouth", "brooklyn gin", "seagrams",
+                "hendrick's", "gordon's", "gordon", "plymouth", "brooklyn gin", "seagrams",
                 "monkey 47", "aviation gin", "sipsmith", "the botanist",
                 "roku gin", "whitley neill", "gin mare", "nolet's", "hayman's",
                 "caorunn", "scapegrace", "tanqueray ten", "bobby's gin",
@@ -28,8 +28,30 @@ def normalize_classes(recognized_classes):
                     "wyskey", "viskey", "vwhisky", "whyski" "whiskey", "whisky",
                     "scotch", "bourbon", "rye whiskey", "single malt",
                     "blended whisky", "cask strength", "malt whisky", "blended scotch",
-                    "jack daniels", "red label", "jameson", "chivas regal"]
+                    "jack daniels", "red label", "jameson", "chivas regal"],
 
+        "vodka": ["vodka", "wodka", "voodka", "wwodka", "vodkaa", "vvodka", "vvodkaa", "vvodka",
+                  "absolut", "smirnoff", "grey goose", "belvedere", "ciroc", "ketel one",
+                  "tito's", "stolichnaya", "svedka", "skyy", "three olives", "chopin",
+                  "zubrowka", "reyka", "luksusowa", "beluga", "crystal head", "finlandia",
+                  "new amsterdam", "42 below", "frïs", "polar ice", "platinum 7x", "pravda",
+                  "ivanabitch", "rain", "effen", "nemiroff", "moskovskaya", "karlsson's gold",
+                  "soplica", "wyborowa", "parliament", "imperial collection", "wiborowa"],
+
+        "campari": ["campari", "campairi", "camparee", "campare", "cammpari", "campari bitter",
+                    "camparee bitter", "camparee aperitif", "campare"],
+
+        "rum": ["rum", "rhum", "room", "ruhm", "rumm", "rohm", "rrum", "rrumm", "rohm",
+                "bacardi", "captain morgan", "havana club", "myers's", "mount gay",
+                "zaya", "ron zacapa", "el dorado", "appleton estate", "gosling's",
+                "pyrat", "plantation", "don q", "kraken", "flor de caña", "barcelo",
+                "dictador", "santa teresa", "sailor jerry", "blackwell"],
+
+        "martini": ["martini", "martine", "martinii", "martiny", "marrtini", "marrtinii",
+                    "martini rosso", "martini bianco", "martini extra dry", "vermouth",
+                    "noilly prat", "cinzano", "lillet blanc", "carpano", "dolin",
+                    "martini gold", "martini royale", "martini fiero", "antica formula"
+        ]
 
     }
 
