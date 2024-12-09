@@ -10,12 +10,12 @@ Recipe = Table('Recipe', metadata, autoload_with=engine)
 Ingredients = Table('Ingredients', metadata, autoload_with=engine)
 recipe_ingredients = Table('recipe_ingredients', metadata, autoload_with=engine)
 
-def format_amount(amount):
-    """
-    Formatiert den Mengenwert, um ihn leserlich und wie in einem Rezeptbuch darzustellen.
-    """
+#def format_amount(amount):
+    #"""
+    #Formatiert den Mengenwert, um ihn leserlich und wie in einem Rezeptbuch darzustellen.
+    #"""
     # Rundet Werte mit Nachkommastellen (z. B. 1.500 auf 1.5) oder gibt ganze Zahlen direkt aus
-    return int(amount) if amount == int(amount) else round(amount, 1)
+    #return int(amount) if amount == int(amount) else round(amount, 1)
 
 def find_recipes_with_ingredients(available_ingredients):
     """
@@ -59,7 +59,8 @@ def find_recipes_with_ingredients(available_ingredients):
             )
             # Zutaten zusammen mit Menge und Einheit abrufen
             ingredients = [
-                f"{format_amount(ingredient_row.amount)} {ingredient_row.unit_of_measurement or ''} {ingredient_row.ingredient_name}".strip()
+                f"{ingredient_row.amount} {ingredient_row.unit_of_measurement or ''} {ingredient_row.ingredient_name}".strip()
+                #f"{format_amount(ingredient_row.amount)} {ingredient_row.unit_of_measurement or ''} {ingredient_row.ingredient_name}".strip()
                 for ingredient_row in conn.execute(ingredients_query).fetchall()
             ]
 

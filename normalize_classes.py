@@ -50,8 +50,7 @@ def normalize_classes(recognized_classes):
         "martini": ["martini", "martine", "martinii", "martiny", "marrtini", "marrtinii",
                     "martini rosso", "martini bianco", "martini extra dry", "vermouth",
                     "noilly prat", "cinzano", "lillet blanc", "carpano", "dolin",
-                    "martini gold", "martini royale", "martini fiero", "antica formula"
-        ]
+                    "martini gold", "martini royale", "martini fiero", "antica formula"]
 
     }
 
