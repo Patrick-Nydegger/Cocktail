@@ -45,7 +45,7 @@ def normalize_classes(recognized_classes):
                 "bacardi", "captain morgan", "havana club", "myers's", "mount gay",
                 "zaya", "ron zacapa", "el dorado", "appleton estate", "gosling's",
                 "pyrat", "plantation", "don q", "kraken", "flor de caña", "barcelo",
-                "dictador", "santa teresa", "sailor jerry", "blackwell"],
+                "dictador", "santa teresa", "sailor jerry", "blackwell", "bacardi carta blanca"],
 
         "martini": ["martini", "martine", "martinii", "martiny", "marrtini", "marrtinii",
                     "martini rosso", "martini bianco", "martini extra dry", "vermouth",
