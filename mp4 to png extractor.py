@@ -1,3 +1,8 @@
+"""
+The following code is used to extract images from a video.
+It was needed to create the training data for the CV model.
+(Video recording of bottles from different angles)
+"""
 import cv2
 import os
 
@@ -10,7 +15,7 @@ os.makedirs(output_folder, exist_ok=True)
 
 # Load the video
 video = cv2.VideoCapture(input_video_path)
-fps = 15  # Frames per second
+fps = 15  # fps = Frames per second
 
 count = 0
 while True:

@@ -10,18 +10,11 @@ Recipe = Table('Recipe', metadata, autoload_with=engine)
 Ingredients = Table('Ingredients', metadata, autoload_with=engine)
 recipe_ingredients = Table('recipe_ingredients', metadata, autoload_with=engine)
 
-#def format_amount(amount):
-    #"""
-    #Formatiert den Mengenwert, um ihn leserlich und wie in einem Rezeptbuch darzustellen.
-    #"""
-    # Rundet Werte mit Nachkommastellen (z. B. 1.500 auf 1.5) oder gibt ganze Zahlen direkt aus
-    #return int(amount) if amount == int(amount) else round(amount, 1)
-
 def find_recipes_with_ingredients(available_ingredients):
-    """
-    Sucht Rezepte, die mit einer Liste vorhandener Zutaten gemacht werden können.
-    Sortiert nach der Häufigkeit der verwendeten Zutaten.
-    """
+
+    #Sucht Rezepte, die mit einer Liste vorhandener Zutaten gemacht werden können.
+    #Sortiert nach der Häufigkeit der verwendeten Zutaten.
+
     with engine.connect() as conn:
         # Unterabfrage: Suche nach IDs der Zutaten, die in der verfügbaren Liste enthalten sind
         subquery = (
@@ -78,21 +71,3 @@ def find_recipes_with_ingredients(available_ingredients):
 # Beispiel für eine Zutatenliste
 #available_ingredients = ["gin","cointrau","champagne","prosecco", "Orange Juice", "Lime"]
 
-# Rezepte suchen
-#recipes = find_recipes_with_ingredients(normalized_classes)
-
-"""
-print("Gefundene Rezepte:")
-#for recipe in recipes:
-    #print(f"{recipe['name']} \n - Zutaten: {', '.join(recipe['ingredients'])} \n - Methode: {recipe['method']} \n {150*'='}")
-
-
-for recipe in recipes:
-    print(f"{recipe['name']}\nZutaten:")
-    for ingredient in recipe['ingredients']:
-        print(f"   {ingredient}")
-
-    # Methode formatieren und umbrechen
-    wrapped_method = textwrap.fill(recipe['method'], width=80)
-    print(f"Methode:\n{wrapped_method}\n{'=' * 80}")
-"""

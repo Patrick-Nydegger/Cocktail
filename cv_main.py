@@ -1,104 +1,180 @@
-import textwrap
+"""
+The following file is the main file for the CV. It starts the camera, passes the frames to the CV model, initiates the
+normalization of the detected objects (normalize_classes), and the DB interaction (db_interaktion), and finally outputs
+the obtained results.A minimal GUI was also implemented
+"""
 
 import cv2
-
 from db_interaktion import find_recipes_with_ingredients
 from normalize_classes import normalize_classes
-from yolo_bottle_detector import BottleDetector
 from bottle_classifier import BottleClassifier
 from ocr_recognition import OCRRecognition
-from draw_utils import draw_object
+import tkinter as tk
+from tkinter import simpledialog, ttk
 
-# Erstellung der Liste für erkannte Flaschen
-#available_ingredients = []
+
+# Creation of the list for detected classes
 recognized_classes = []
 
-# Funktion für management von CV-Modul
+
+# Function for managing the CV module
 def cv_main(recognized_classes):
-    bottle_detector = BottleDetector()
     bottle_classifier = BottleClassifier('best.pt')
-    ocr_recognizer = OCRRecognition(language='eng')
 
     cap = cv2.VideoCapture(0)
 
-    # Einstellen der Confidence, die verlangt wird, falls ein Label durch bottle_classifications erkannt wird
+    # Setting the confidence required for a label to be detected by bottle_classifications
     confidence_level = 0.5
 
     while True:
         ret, frame = cap.read()
         if not ret:
-            print("Frame konnte nicht gelesen werden")
+            print("Frame could not be read")
             break
 
-        # Flaschenklassifizierung mit optimiertem YOLO-Modell
+        # Bottle classification
         bottle_classification = bottle_classifier.classify_bottles(frame)
-        frame = draw_object(frame, bottle_classification, color=(255, 0, 0), label_prefix="Class")
 
-        # Debugging der Klassifikationen
-        if not bottle_classification:
-            print("Keine Klassifikation erkannt!")
-        else:
-            print(f"Klassifikationen gefunden: {bottle_classification}")
-
-        # Erkannt Klassen in der Konsole ausgeben
-
+        # Drawing objects with recognized classes
         for x_min, y_min, x_max, y_max, confidence, class_id, class_name in bottle_classification:
-            print(f"Gefunden: {class_name} mit Confidence: {confidence:.2f}")  # Debugging der Confidence-Werte
-            class_name = str(class_name)
-            print(class_name)
-            recognized_classes.append(class_name)
-
             if confidence >= confidence_level:
-                #available_ingredients.append(class_name)
+                label = f"{class_name} ({confidence:.2f})"
+                cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (255, 255, 255), 4)
+                cv2.putText(frame, label, (x_min, y_min - 10), cv2.FONT_HERSHEY_SIMPLEX,
+                            0.5, (255, 255, 255), 2)
 
+                # Adding the recognized objects to the "recognized_classes" list
                 recognized_classes.append(class_name)
 
-        # Zeige die erkannten Klassen nur einmal pro Frame
-        if recognized_classes:
-            print(f"Erkannte Klassen: {', '.join(set(recognized_classes))}")
-        else:
-            print("Keine Klassen erkannt")
-
-        # Zeige die Ergebnisse
-        cv2.imshow('Bottle Detection', frame)
-
+        # Display the results in the camera window
+        cv2.imshow('PRESS "Q" TO CLOSE WINDOW', frame)
 
         if cv2.waitKey(1) == ord('q'):
             break
 
     cap.release()
     cv2.destroyAllWindows()
-    #print("Alle erkannte Klassen:", available_ingredients)
 
-     # "gin","cointrau","prosecco", "Orange Juice", "Lime"]
-    available_essentials = input("Enter your available essentials (like: lemon juice, sugar,...) \n ")
-    #recognized_classes.append(available_essentials)
+    # Ask the user for additional ingredients or essentials (everyday ingredients)
+    available_essentials = get_available_essentials()
 
-    # Eingabe splitten und zur Liste hinzufügen
-    recognized_classes.extend(available_essentials.split(","))  # Split basierend auf Kommas
+    recognized_classes.extend(available_essentials.split(","))
+    recognized_classes = [item.strip() for item in recognized_classes if item.strip()]
 
-    # Liste bereinigen: Whitespace entfernen und Normalisierung anwenden
-    #recognized_classes = [item.strip() for item in recognized_classes if
-                          #item.strip()]  # Entfernt Leerzeichen und leere Einträge
-
-    # Normalisierte Klassen erzeugen
+    # Create normalized classes
     normalized_classes = normalize_classes(recognized_classes)
 
+    # Find and display recipes
     recipes = find_recipes_with_ingredients(normalized_classes)
+    display_recipes_gui(recipes)
 
-    print("Gefundene Rezepte:")
-    # for recipe in recipes:
-    # print(f"{recipe['name']} \n - Zutaten: {', '.join(recipe['ingredients'])} \n - Methode: {recipe['method']} \n {150*'='}")
 
-    for recipe in recipes:
-        print(f"{recipe['name']}\nZutaten:")
+# GUI to add additional ingredients or essentials (everyday ingredients)
+def get_available_essentials():
+    # Create the root window
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+
+    # Set a dark theme for the input dialog
+    root.configure(bg="#2e2e2e")  # Dark background for root window
+    style = ttk.Style()
+    style.configure("TButton", background="#4e4e4e", foreground="white")
+    style.configure("TLabel", background="#2e2e2e", foreground="white")
+
+    # Display input dialog with dark theme
+    input_value = simpledialog.askstring(
+        "Input",
+        "Enter your available essentials or additional ingredients (like: lemon juice, sugar,...):",
+        parent=root
+    )
+
+    # If the user clicks "Cancel", input_value will be None
+    if input_value is None:
+        input_value = ""  # Set to empty string or handle as needed
+
+    # Destroy the root window after input
+    root.destroy()
+    return input_value
+
+
+# GUI to display the found recipes
+def display_recipes_gui(recipes):
+    # Create the main window
+    root = tk.Tk()
+    root.title("Found Recipes")
+    root.geometry("700x600")  # Window size
+    root.configure(bg="#2e2e2e")  # Dark gray background
+
+    # Create a scrollable area for recipes
+    canvas = tk.Canvas(root, bg="#2e2e2e")
+    scrollbar = ttk.Scrollbar(root, orient=tk.VERTICAL, command=canvas.yview)
+    scrollable_frame = ttk.Frame(canvas)
+
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+    )
+
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    # Configure the style for the frame and label
+    style = ttk.Style()
+    style.configure("Dark.TFrame", background="#2e2e2e")
+    style.configure("NoRecipes.TLabel", background="#2e2e2e", foreground="white", font=("Arial", 14, "bold"))
+
+    scrollable_frame.configure(style="Dark.TFrame")
+
+    # Check if there are recipes
+    if not recipes:
+        # Display "No matching recipes found"
+        no_recipes_label = ttk.Label(scrollable_frame, text="No matching recipes found", style="NoRecipes.TLabel")
+        no_recipes_label.pack(pady=20)
+
+    # Display recipes
+    for idx, recipe in enumerate(recipes):
+        bg_color = "#4e4e4e"
+
+        # Frame for each recipe
+        recipe_frame = tk.Frame(scrollable_frame, bg=bg_color, pady=10, padx=10, relief=tk.FLAT, bd=2)
+        recipe_frame.pack(fill=tk.BOTH, expand=True, pady=5, padx=5)
+
+        # Recipe name
+        name_label = tk.Label(recipe_frame, text=recipe['name'].upper(), bg=bg_color, fg="white",
+                              font=("Arial", 16, "bold"))
+        name_label.pack(anchor="w", pady=5)
+
+        # Ingredients section
+        ingredients_label = tk.Label(recipe_frame, text="Ingredients:", bg=bg_color, fg="white",
+                                     font=("Arial", 12, "bold"))
+        ingredients_label.pack(anchor="w")
+
         for ingredient in recipe['ingredients']:
-            print(f"   {ingredient}")
+            ingredient_label = tk.Label(recipe_frame, text=f"     {ingredient}", bg=bg_color, fg="white",
+                                        font=("Arial", 11))
+            ingredient_label.pack(anchor="w")
 
-        # Methode formatieren und umbrechen
-        wrapped_method = textwrap.fill(recipe['method'], width=80)
-        print(f"Methode:\n{wrapped_method}\n{'=' * 80}")
+        # Method section
+        method_label = tk.Label(recipe_frame, text="Method:", bg=bg_color, fg="white", font=("Arial", 12, "bold"))
+        method_label.pack(anchor="w", pady=(10, 0))
 
+        # Display the method with word wrapping
+        method_text = tk.Label(
+            recipe_frame,
+            text=recipe['method'],
+            bg=bg_color,
+            fg="white",
+            wraplength=650,  # Wrap text at 650 pixels
+            justify="left",
+            font=("Arial", 11)
+        )
+        method_text.pack(anchor="w", pady=5)
+
+    # Start the main loop
+    root.mainloop()
 
 
 
