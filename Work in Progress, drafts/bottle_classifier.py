@@ -1,3 +1,8 @@
+"""
+The following file handles class recognition using the self-trained CV-model
+"""
+
+
 from ultralytics import YOLO
 
 
@@ -15,7 +20,7 @@ class BottleClassifier:
                 x_min, y_min, x_max, y_max = map(int, detection.xyxy[0])
                 confidence = detection.conf[0]
                 class_id = int(detection.cls[0])
-                class_name = names[class_id]  # Erhalte den Klassennamen
+                class_name = names[class_id]  # Get the class name
 
                 detections.append((x_min, y_min, x_max, y_max, confidence, class_id, class_name))
         return detections

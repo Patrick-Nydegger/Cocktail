@@ -1,22 +1,24 @@
-from sqlalchemy import create_engine, MetaData, Table, select, func
-import textwrap
+"""
+This file handles database interaction.
+"""
 
-# Verbindung zur SQLite-Datenbank herstellen
+from sqlalchemy import create_engine, MetaData, Table, select, func
+
+# Establish a connection to the SQLite database
 engine = create_engine('sqlite:///Recipes.db')
 metadata = MetaData()
 
-# Tabellen laden
+# Load tables
 Recipe = Table('Recipe', metadata, autoload_with=engine)
 Ingredients = Table('Ingredients', metadata, autoload_with=engine)
 recipe_ingredients = Table('recipe_ingredients', metadata, autoload_with=engine)
 
+
+# Search for recipes that can be made with a list of available ingredients.
+# Sorted by the frequency of the ingredients used.
 def find_recipes_with_ingredients(available_ingredients):
-
-    #Sucht Rezepte, die mit einer Liste vorhandener Zutaten gemacht werden können.
-    #Sortiert nach der Häufigkeit der verwendeten Zutaten.
-
     with engine.connect() as conn:
-        # Unterabfrage: Suche nach IDs der Zutaten, die in der verfügbaren Liste enthalten sind
+        # Subquery: Search for IDs of ingredients that are in the available list
         subquery = (
             select(recipe_ingredients.c.Reciperecipe_ID)
             .join(Ingredients, recipe_ingredients.c.Ingredientsingredients_ID == Ingredients.c.ingredients_ID)
@@ -28,17 +30,17 @@ def find_recipes_with_ingredients(available_ingredients):
             )
         ).subquery()
 
-        # Hauptabfrage: Kombiniere Rezepte mit der Unterabfrage und sortiere nach ingredient_count
+        # Main query: Combine recipes with the subquery and sort by ingredient_count
         query = (
             select(Recipe.c.recipe_ID, Recipe.c.name, Recipe.c.method, subquery.c.ingredient_count)
             .join(subquery, Recipe.c.recipe_ID == subquery.c.Reciperecipe_ID)
             .order_by(subquery.c.ingredient_count.desc())
         )
 
-        # Ergebnisse der Hauptabfrage abrufen
+        # Fetch the results of the main query
         main_results = conn.execute(query).fetchall()
 
-        # Für jedes Rezept die vollständige Zutatenliste mit Mengenangabe abrufen
+        # Fetch the ingredient list with quantities for each recipe
         recipes = []
         for row in main_results:
             ingredients_query = (
@@ -47,17 +49,19 @@ def find_recipes_with_ingredients(available_ingredients):
                     recipe_ingredients.c.amount,
                     recipe_ingredients.c.unit_of_measurement
                 )
-                .join(recipe_ingredients, Ingredients.c.ingredients_ID == recipe_ingredients.c.Ingredientsingredients_ID)
+                .join(recipe_ingredients,
+                      Ingredients.c.ingredients_ID == recipe_ingredients.c.Ingredientsingredients_ID)
                 .where(recipe_ingredients.c.Reciperecipe_ID == row.recipe_ID)
             )
-            # Zutaten zusammen mit Menge und Einheit abrufen
+
             ingredients = [
-                f"{ingredient_row.amount} {ingredient_row.unit_of_measurement or ''} {ingredient_row.ingredient_name}".strip()
-                #f"{format_amount(ingredient_row.amount)} {ingredient_row.unit_of_measurement or ''} {ingredient_row.ingredient_name}".strip()
+                f"{ingredient_row.amount} {ingredient_row.unit_of_measurement or ''} {ingredient_row.ingredient_name}"
+                .strip()
+
                 for ingredient_row in conn.execute(ingredients_query).fetchall()
             ]
 
-            # Rezeptdaten zusammenstellen
+            # Compile recipe data
             recipes.append({
                 'name': row.name,
                 'method': row.method,
@@ -66,8 +70,3 @@ def find_recipes_with_ingredients(available_ingredients):
             })
 
     return recipes
-
-
-# Beispiel für eine Zutatenliste
-#available_ingredients = ["gin","cointrau","champagne","prosecco", "Orange Juice", "Lime"]
-

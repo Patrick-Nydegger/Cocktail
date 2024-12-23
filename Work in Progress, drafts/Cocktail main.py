@@ -1,5 +1,6 @@
-#Hier wird das Hauptmenu und die Applikationssteuerung Programmiert
-
+"""
+Here, the main menu and application control will be programmed. The current file was not completed.
+"""
 
 
 """
@@ -8,23 +9,22 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 
-# Lade das Modell
+# Load model
 model = YOLO('best.pt')
 
-# Öffne die Kamera
+# open camera
 cap = cv2.VideoCapture(0)
 
 while True:
     # Lies ein Frame
     ret, frame = cap.read()
     if not ret:
-        print("Frame konnte nicht gelesen werden")
+        print("Frame could not be read")
         break
 
-    # Nutze das Modell, um das Bild zu verarbeiten
     results = model(frame)
 
-    # Verarbeite die Ergebnisse, falls vorhanden
+    # Process the results, if any
     if results and len(results) > 0:
         for detection in results[0].boxes:  # Zugriff auf das erste Bild und seine Detections
             # Extrahiere die Bounding-Box-Koordinaten und Klasse
@@ -32,21 +32,21 @@ while True:
             confidence = detection.conf[0]  # Vertrauen
             class_id = int(detection.cls[0])  # Klassen-ID
 
-            # Zeichne das Rechteck um das erkannte Objekt
+            # Draw the rectangle around the detected object
             cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (255, 0, 0), 2)
 
-            # Füge den Klassennamen und die Konfidenz hinzu
+            # Add the class name and confidence
             label = f"{results[0].names[class_id]}: {confidence:.2f}"
             cv2.putText(frame, label, (x_min, y_min - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
-    # Zeige die Ergebnisse
+    # Show results
     cv2.imshow('YOLOv8 Detection', frame)
 
-    # Beende mit 'q'
+    # quit with 'q'
     if cv2.waitKey(1) == ord('q'):
         break
 
-# Gib die Kamera frei
+# release camera
 cap.release()
 cv2.destroyAllWindows()
 

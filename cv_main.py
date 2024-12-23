@@ -8,7 +8,6 @@ import cv2
 from db_interaktion import find_recipes_with_ingredients
 from normalize_classes import normalize_classes
 from bottle_classifier import BottleClassifier
-from ocr_recognition import OCRRecognition
 import tkinter as tk
 from tkinter import simpledialog, ttk
 

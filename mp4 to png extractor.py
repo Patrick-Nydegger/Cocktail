@@ -1,6 +1,6 @@
 """
 The following code is used to extract images from a video.
-It was needed to create the training data for the CV model.
+It was needed to create the training data for the CV-model.
 (Video recording of bottles from different angles)
 """
 import cv2
