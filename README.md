@@ -11,7 +11,7 @@ After 12 iterations, the object recognition is usable, although not optimal. The
 Therefore, the two approaches are currently being combined. First, the bottles are recognized, and these image sections are evaluated using the self-trained model (based on the most common bottles). If a label is found, the bottle is added to 'detected bottles'. If the label is not recognized, the OCR module is called up and, similar to the first attempt, compared with a list. If this also proves unsuccessful, the bottle will need to be labeled manually. This process is still under development and subject to further refinement.
 
 ## Knowledge engineering
-In addition to this CV module, a database is also implemented, which stores recipes, essentials for the cocktails and a star rating system. 
+In addition to this CV module, a database is also implemented, which stores recipes and essentials for the cocktails. 
 
 ## Further ideas
 If there is enough time, the system suggests recipes that the user might like. this is done based on the recipes used (ingredients, categories) and the star rating with KNN or a decision tree / gradient boosting.
