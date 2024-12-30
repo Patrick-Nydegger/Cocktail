@@ -18,7 +18,7 @@ recognized_classes = []
 
 # Function for managing the CV module
 def cv_main(recognized_classes):
-    bottle_classifier = BottleClassifier('best.pt')
+    bottle_classifier = BottleClassifier('best.pt') #
 
     cap = cv2.VideoCapture(0)
 
