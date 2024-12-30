@@ -16,5 +16,5 @@ In addition to this CV module, a database is also implemented, which stores reci
 ## Further ideas
 If there is enough time, the system suggests recipes that the user might like. this is done based on the recipes used (ingredients, categories) and the star rating with KNN or a decision tree / gradient boosting.
 
-##BPMN2.0
+## BPMN2.0
 For the exact process, see the BPMN2.0 file, which is also stored here on github.
