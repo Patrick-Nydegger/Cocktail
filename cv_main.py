@@ -1,7 +1,7 @@
 """
 The following file is the main file for the CV. It starts the camera, passes the frames to the CV model, initiates the
 normalization of the detected objects (normalize_classes), and the DB interaction (db_interaktion), and finally outputs
-the obtained results.A minimal GUI was also implemented
+the obtained results. A minimal GUI was also implemented
 """
 
 import cv2
